@@ -1,28 +1,19 @@
+
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { getEntryById, getHistory, updateEntry } from "@/lib/analysis-store";
+import { normalizeEntry } from "@/lib/analysis-migration";
 import type { AnalysisEntry } from "@/lib/analysis-types";
 import { CheckCircle, BookOpen, Calendar, HelpCircle, Target, Download, Copy, ArrowRight, ThumbsUp, ThumbsDown, Building, Users, Briefcase, ListChecks, Info } from "lucide-react";
 import { toast } from "sonner";
 
-const categoryColors: Record<string, string> = {
-  "Core CS": "bg-primary/10 text-primary border-primary/20",
-  "Languages": "bg-accent text-accent-foreground border-accent-foreground/20",
-  "Web": "bg-success/10 text-success border-success/20",
-  "Data": "bg-warning/10 text-warning border-warning/20",
-  "Cloud/DevOps": "bg-destructive/10 text-destructive border-destructive/20",
-  "Testing": "bg-secondary text-secondary-foreground border-border",
-  "General": "bg-muted text-muted-foreground border-border",
-};
-
 const ReadinessRing = ({ score }: { score: number }) => {
   const r = 60;
   const circ = 2 * Math.PI * r;
-  // Ensure score is within 0-100 bounds for visual representation
   const boundedScore = Math.max(0, Math.min(100, score));
   const offset = circ - (boundedScore / 100) * circ;
 
@@ -45,6 +36,7 @@ const ReadinessRing = ({ score }: { score: number }) => {
 };
 
 const ResourcesPage = () => {
+  const { id } = useParams(); // Support route param if used
   const location = useLocation();
   const [entry, setEntry] = useState<AnalysisEntry | null>(null);
   const [confidenceMap, setConfidenceMap] = useState<Record<string, "know" | "practice">>({});
@@ -52,82 +44,31 @@ const ResourcesPage = () => {
 
   // Initialize entry and state
   useEffect(() => {
-    const stateId = (location.state as any)?.analysisId;
+    // Try to get ID from params or location state
+    const stateId = (location.state as any)?.analysisId || id;
     let foundEntry: AnalysisEntry | undefined;
 
-    if (stateId) {
-      foundEntry = getEntryById(stateId);
-    } else {
-      // Fall back to latest
-      const history = getHistory();
-      if (history.length > 0) foundEntry = history[0];
+    try {
+      if (stateId) {
+        foundEntry = getEntryById(stateId);
+      } else {
+        // Fall back to latest
+        const history = getHistory();
+        if (history.length > 0) foundEntry = history[0];
+      }
+
+      if (foundEntry) {
+        // Normalize on load to ensure schema compliance
+        const normalized = normalizeEntry(foundEntry);
+        setEntry(normalized);
+        setConfidenceMap(normalized.skillConfidenceMap || {});
+        setLiveScore(normalized.finalScore ?? normalized.baseScore ?? 0);
+      }
+    } catch (e) {
+      console.error("Error loading entry:", e);
+      toast.error("Failed to load analysis data.");
     }
-
-    if (foundEntry) {
-      setEntry(foundEntry);
-      setConfidenceMap(foundEntry.skillConfidenceMap || {});
-      setLiveScore(foundEntry.readinessScore);
-    }
-  }, [location.state]);
-
-  // Recalculate score whenever confidenceMap changes, but only if we have an entry
-  useEffect(() => {
-    if (!entry) return;
-
-    // Calculate score adjustment
-    let scoreAdjustment = 0;
-    Object.values(confidenceMap).forEach((status) => {
-      if (status === "know") scoreAdjustment += 2;
-      if (status === "practice") scoreAdjustment -= 2;
-    });
-
-    // Base score is the original assessment score
-    // We assume the stored readinessScore is the BASE, but that might be confusing if we update it.
-    // For now, let's treat entry.readinessScore as the base reference for this session, 
-    // OR we can say the stored score IS the live score.
-    // Requirement says: "Start from base readinessScore (already computed). Then +2/-2"
-    // To avoid double counting, we should really recalculate from the ORIGINAL base if possible,
-    // or just apply the delta to the CURRENT stored score if we treat it as dynamic.
-    // Let's simpler approach: The score in `entry` captures the state.
-
-    // Wait, if we persist the score, next load will add +2 again?
-    // Better strategy: Calculate score dynamically from skills + base traits.
-    // Since we don't have the "base traits score" separately, let's just update the single score field
-    // but ensure we don't drift.
-    // Implementation: valid range 0-100.
-
-    // Let's just trust the current map state reflects the user's intent to modifier.
-    // Effectively: NewScore = BaseScore + (Knows * 2) - (NeedsPractice * 2)
-    // PROBLEM: We don't know "BaseScore" (score without any toggles).
-    // ALTERNATIVE: We update the score visibly but maybe only persist the map?
-    // REQUIREMENT: "Update score in real-time."
-
-    // Let's implement a simple heuristic:
-    // We will use the `entry.readinessScore` as the starting point.
-    // But we need to handle the case where we reload.
-    // If we reload, `entry.readinessScore` already includes changes? 
-    // Let's assume `entry.readinessScore` in the DB is the "Live" score.
-
-    // Actually, to make this robust:
-    // Let's allow the user to modify the score, and we save that new score.
-    // BUT we need to ensure meaningful changes.
-    // Let's just apply the delta to the state visually and save it.
-
-    // Refined Logic (matches requirement "Start from base... then"):
-    // We will initialize `liveScore` with `entry.readinessScore` on load.
-    // When a toggle changes:
-    //   Previous State -> New State
-    //   None -> Know (+2)
-    //   None -> Practice (-2)
-    //   Know -> Practice (-4)
-    //   Practice -> Know (+4)
-    //   Know -> None (-2)
-    //   Practice -> None (+2)
-
-    // To do this strictly, we need the `previous` state.
-    // Just handling it in the toggle function is safer.
-
-  }, [confidenceMap, entry]); // We will handle score updates in toggleSkill instead to be precise.
+  }, [location.state, id]);
 
   const toggleSkill = (skill: string, type: "know" | "practice") => {
     if (!entry) return;
@@ -136,25 +77,21 @@ const ResourcesPage = () => {
     let newMap = { ...confidenceMap };
     let scoreDelta = 0;
 
-    // Logic for toggling
+    // Logic for toggling - simplistic approach relative to current state
+    // We recalculate delta based on change
     if (currentStatus === type) {
-      // Toggle off (remove status)
+      // Toggle off
       delete newMap[skill];
-      // Reverse the effect
       if (type === "know") scoreDelta = -2;
       if (type === "practice") scoreDelta = +2;
     } else {
-      // Toggle on (or switch)
+      // Toggle on
       newMap[skill] = type;
-
-      if (currentStatus === "know") {
-        // Switching Know -> Practice
-        if (type === "practice") scoreDelta = -4; // -2 for removing know, -2 for adding practice
-      } else if (currentStatus === "practice") {
-        // Switching Practice -> Know
-        if (type === "know") scoreDelta = +4; // +2 for removing practice, +2 for adding know
-      } else {
-        // Fresh toggle (None -> X)
+      if (currentStatus === "know") { // Switching Know -> Practice
+        scoreDelta = -4;
+      } else if (currentStatus === "practice") { // Switching Practice -> Know
+        scoreDelta = +4;
+      } else { // Fresh toggle
         if (type === "know") scoreDelta = +2;
         if (type === "practice") scoreDelta = -2;
       }
@@ -162,7 +99,6 @@ const ResourcesPage = () => {
 
     // Update state
     setConfidenceMap(newMap);
-
     const newScore = Math.max(0, Math.min(100, liveScore + scoreDelta));
     setLiveScore(newScore);
 
@@ -170,7 +106,8 @@ const ResourcesPage = () => {
     const updatedEntry = {
       ...entry,
       skillConfidenceMap: newMap,
-      readinessScore: newScore
+      finalScore: newScore,
+      updatedAt: new Date().toISOString()
     };
 
     setEntry(updatedEntry); // Keep local entry in sync
@@ -195,16 +132,16 @@ const ResourcesPage = () => {
       ``,
       `SKILLS ASSESSMENT`,
       `-----------------`,
-      ...entry.extractedSkills.flatMap(cat =>
-        cat.skills.map(s => {
+      ...Object.entries(entry.extractedSkills).flatMap(([cat, skills]) =>
+        skills.map(s => {
           const status = confidenceMap[s] ? `[${confidenceMap[s].toUpperCase()}]` : "[ ]";
-          return `${status} ${s} (${cat.name})`;
+          return `${status} ${s} (${cat})`;
         })
       ),
       ``,
       `7-DAY PREPARATION PLAN`,
       `----------------------`,
-      ...entry.plan.map(d => `Day ${d.day} (${d.focus}):\n` + d.tasks.map(t => `  - ${t}`).join('\n')),
+      ...entry.plan7Days.map(d => `Day ${d.day} (${d.focus}):\n` + d.tasks.map(t => `  - ${t}`).join('\n')),
       ``,
       `PREPARATION CHECKLIST`,
       `---------------------`,
@@ -241,8 +178,8 @@ const ResourcesPage = () => {
     );
   }
 
-  // Derived data for export
-  const planText = entry.plan.map(d => `Day ${d.day} (${d.focus}):\n` + d.tasks.map(t => `- ${t}`).join('\n')).join('\n\n');
+  // Derived data for export helpers
+  const planText = entry.plan7Days.map(d => `Day ${d.day} (${d.focus}):\n` + d.tasks.map(t => `- ${t}`).join('\n')).join('\n\n');
   const checklistText = entry.checklist.map(r => `## ${r.title}\n` + r.items.map(i => `- [ ] ${i}`).join('\n')).join('\n\n');
   const questionsText = entry.questions.map((q, i) => `${i + 1}. ${q}`).join('\n');
 
@@ -266,7 +203,7 @@ const ResourcesPage = () => {
 
           <div className="flex flex-wrap gap-2 mt-4">
             <Button variant="outline" size="sm" className="h-8 gap-2" onClick={() => copyToClipboard(planText, "7-Day Plan")}>
-              <Copy className="h-3.5 w-3.5" /> Copy 7-day plan
+              <Copy className="h-3.5 w-3.5" /> Copy Plan
             </Button>
             <Button variant="outline" size="sm" className="h-8 gap-2" onClick={() => copyToClipboard(checklistText, "Checklist")}>
               <Copy className="h-3.5 w-3.5" /> Copy Checklist
@@ -354,42 +291,56 @@ const ResourcesPage = () => {
           <p className="text-sm text-muted-foreground">Mark skills you know (+2 score) or need to practice (-2 score).</p>
         </CardHeader>
         <CardContent className="space-y-4">
-          {entry.extractedSkills.map((cat) => (
-            <div key={cat.name}>
-              <p className="text-sm font-medium text-muted-foreground mb-2">{cat.name}</p>
-              <div className="flex flex-wrap gap-2">
-                {cat.skills.map((skill) => {
-                  const status = confidenceMap[skill];
-                  return (
-                    <div
-                      key={skill}
-                      className="inline-flex items-center rounded-md border p-1 pr-2 gap-2 bg-background hover:bg-muted/50 transition-colors"
-                    >
-                      <div className="flex gap-0.5">
-                        <button
-                          onClick={() => toggleSkill(skill, "know")}
-                          className={`p-1 rounded hover:bg-success/20 transition-colors ${status === "know" ? "text-success bg-success/10" : "text-muted-foreground"}`}
-                          title="I know this"
-                        >
-                          <ThumbsUp className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          onClick={() => toggleSkill(skill, "practice")}
-                          className={`p-1 rounded hover:bg-warning/20 transition-colors ${status === "practice" ? "text-warning bg-warning/10" : "text-muted-foreground"}`}
-                          title="Need practice"
-                        >
-                          <ThumbsDown className="h-3.5 w-3.5" />
-                        </button>
+          {Object.entries(entry.extractedSkills).map(([catName, skills]) => {
+            if (skills.length === 0) return null;
+
+            const displayNames: Record<string, string> = {
+              coreCS: "Core CS",
+              languages: "Languages",
+              web: "Web Development",
+              data: "Data Engineering",
+              cloud: "Cloud & DevOps",
+              testing: "Testing",
+              other: "Other Skills"
+            };
+
+            return (
+              <div key={catName}>
+                <p className="text-sm font-medium text-muted-foreground mb-2">{displayNames[catName] || catName}</p>
+                <div className="flex flex-wrap gap-2">
+                  {skills.map((skill) => {
+                    const status = confidenceMap[skill];
+                    return (
+                      <div
+                        key={skill}
+                        className="inline-flex items-center rounded-md border p-1 pr-2 gap-2 bg-background hover:bg-muted/50 transition-colors"
+                      >
+                        <div className="flex gap-0.5">
+                          <button
+                            onClick={() => toggleSkill(skill, "know")}
+                            className={`p-1 rounded hover:bg-success/20 transition-colors ${status === "know" ? "text-success bg-success/10" : "text-muted-foreground"}`}
+                            title="I know this"
+                          >
+                            <ThumbsUp className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => toggleSkill(skill, "practice")}
+                            className={`p-1 rounded hover:bg-warning/20 transition-colors ${status === "practice" ? "text-warning bg-warning/10" : "text-muted-foreground"}`}
+                            title="Need practice"
+                          >
+                            <ThumbsDown className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                        <span className={`text-sm ${status === "know" ? "font-medium text-foreground" : status === "practice" ? "text-muted-foreground" : "text-foreground"}`}>
+                          {skill}
+                        </span>
                       </div>
-                      <span className={`text-sm ${status === "know" ? "font-medium text-foreground" : status === "practice" ? "text-muted-foreground" : "text-foreground"}`}>
-                        {skill}
-                      </span>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </CardContent>
       </Card>
 
@@ -425,7 +376,7 @@ const ResourcesPage = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
-          {entry.plan.map((day, i) => (
+          {entry.plan7Days.map((day, i) => (
             <div key={i}>
               <div className="flex items-center gap-2 mb-2">
                 <Badge variant="secondary" className="rounded-md">{day.day}</Badge>

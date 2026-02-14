@@ -20,12 +20,26 @@ export interface AnalysisEntry {
   company: string;
   role: string;
   jdText: string;
-  extractedSkills: SkillCategory[];
-  plan: DayPlan[];
+  extractedSkills: {
+    coreCS: string[];
+    languages: string[];
+    web: string[];
+    data: string[];
+    cloud: string[];
+    testing: string[];
+    other: string[];
+  };
+  plan7Days: DayPlan[];
   checklist: ChecklistRound[];
   questions: string[];
-  readinessScore: number;
-  skillConfidenceMap?: Record<string, "know" | "practice">;
+
+  // Score Tracking
+  baseScore: number;
+  finalScore: number; // The live score shown to user
+  skillConfidenceMap: Record<string, "know" | "practice">;
+
+  updatedAt: string;
+
   companyIntel?: {
     industry: string;
     size: "Startup" | "Mid-size" | "Enterprise";

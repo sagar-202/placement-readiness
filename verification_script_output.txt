@@ -1,0 +1,14 @@
+Starting Verification Script...
+Test 1: Schema Completeness
+PASS: All schema fields present.
+PASS: extractedSkills is an object.
+
+Test 2: Fallback Skills
+PASS: Fallback skills detected.
+
+Test 3: Score Logic
+PASS: baseScore equals finalScore initially.
+
+Test 4: Legacy Migration
+PASS: Legacy entry normalized correctly.
+Verification Script Finished.

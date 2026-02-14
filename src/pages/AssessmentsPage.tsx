@@ -52,7 +52,7 @@ const AssessmentsPage = () => {
               <CardContent className="flex items-center justify-between py-4 px-5">
                 <div className="flex items-center gap-4 min-w-0">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm shrink-0">
-                    {entry.readinessScore}
+                    {entry.finalScore}
                   </div>
                   <div className="min-w-0">
                     <p className="font-medium text-foreground truncate">
@@ -66,7 +66,7 @@ const AssessmentsPage = () => {
                         hour: "2-digit", minute: "2-digit",
                       })}
                       <span>•</span>
-                      <span>{entry.extractedSkills.flatMap(s => s.skills).length} skills</span>
+                      <span>{Object.values(entry.extractedSkills).flat().length} skills</span>
                     </div>
                   </div>
                 </div>

@@ -5,8 +5,11 @@ const STORAGE_KEY = "placement-analysis-history";
 export function getHistory(): AnalysisEntry[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    console.error("Failed to parse analysis history", e);
     return [];
   }
 }

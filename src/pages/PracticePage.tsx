@@ -90,13 +90,20 @@ const PracticePage = () => {
               className="min-h-[200px]"
             />
             <div className="flex items-center justify-between mt-2">
-              <span className="text-xs text-muted-foreground">
-                {jdText.length} characters {jdText.length > 800 && <Badge variant="secondary" className="ml-1 text-xs">Detailed JD ✓</Badge>}
+              <span className={`text-xs ${jdText.length > 0 && jdText.length < 200 ? "text-destructive font-medium" : "text-muted-foreground"}`}>
+                {jdText.length} characters
+                {jdText.length > 800 && <Badge variant="secondary" className="ml-1 text-xs">Detailed JD ✓</Badge>}
+                {jdText.length > 0 && jdText.length < 200 && " (Too short for deep analysis)"}
               </span>
               <Button variant="ghost" size="sm" onClick={handleLoadSample}>
                 Load Sample JD
               </Button>
             </div>
+            {jdText.length > 0 && jdText.length < 200 && (
+              <p className="text-xs text-destructive mt-1">
+                This JD is too short to analyze deeply. Paste full JD for better output.
+              </p>
+            )}
           </div>
 
           <Button

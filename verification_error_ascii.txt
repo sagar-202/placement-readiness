@@ -1,0 +1,46 @@
+
+ RUN  v3.2.4 C:/Users/sagar patgar/Desktop/Placement Readiness Platform
+
+ ❯ src/lib/full_verification.test.ts (3 tests | 2 failed) 8ms
+   × Platform Hardening Verification > runAnalysis produces a complete AnalysisEntry schema 4ms
+     → QUESTION_BANK is not defined
+   × Platform Hardening Verification > populates fallback skills for non-technical JD 1ms
+     → QUESTION_BANK is not defined
+   ✓ Platform Hardening Verification > normalizeEntry adds missing fields to legacy data 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/lib/full_verification.test.ts > Platform Hardening Verification > runAnalysis produces a complete AnalysisEntry schema
+ReferenceError: QUESTION_BANK is not defined
+ ❯ generateQuestions src/lib/skill-extractor.ts:259:18
+    257| 
+    258|   for (const skill of allSkills) {
+    259|     const bank = QUESTION_BANK[skill];
+       |                  ^
+    260|     if (bank) {
+    261|       questions.push(...bank);
+ ❯ Module.runAnalysis src/lib/skill-extractor.ts:319:21
+ ❯ src/lib/full_verification.test.ts:14:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/lib/full_verification.test.ts > Platform Hardening Verification > populates fallback skills for non-technical JD
+ReferenceError: QUESTION_BANK is not defined
+ ❯ generateQuestions src/lib/skill-extractor.ts:259:18
+    257| 
+    258|   for (const skill of allSkills) {
+    259|     const bank = QUESTION_BANK[skill];
+       |                  ^
+    260|     if (bank) {
+    261|       questions.push(...bank);
+ ❯ Module.runAnalysis src/lib/skill-extractor.ts:319:21
+ ❯ src/lib/full_verification.test.ts:50:23
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  22:35:05
+   Duration  1.76s (transform 53ms, setup 129ms, collect 105ms, tests 8ms, environment 713ms, prepare 103ms)
+
