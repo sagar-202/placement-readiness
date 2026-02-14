@@ -25,3 +25,12 @@ export function deleteEntry(id: string): void {
   const history = getHistory().filter(e => e.id !== id);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
 }
+
+export function updateEntry(updatedEntry: AnalysisEntry): void {
+  const history = getHistory();
+  const index = history.findIndex(e => e.id === updatedEntry.id);
+  if (index !== -1) {
+    history[index] = updatedEntry;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+  }
+}

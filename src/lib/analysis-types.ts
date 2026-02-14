@@ -25,4 +25,5 @@ export interface AnalysisEntry {
   checklist: ChecklistRound[];
   questions: string[];
   readinessScore: number;
+  skillConfidenceMap?: Record<string, "know" | "practice">;
 }
