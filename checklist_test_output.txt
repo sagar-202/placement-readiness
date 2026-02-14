@@ -1,0 +1,39 @@
+
+ RUN  v3.2.4 C:/Users/sagar patgar/Desktop/Placement Readiness Platform
+
+ ❯ src/pages/ChecklistLock.test.tsx (5 tests | 5 failed) 16ms
+   × Checklist & Ship Lock Verification > renders exactly 10 checklist items 11ms
+     → Cannot initialize local storage without a `--localstorage-file` path
+   × Checklist & Ship Lock Verification > updates counter and warning when items are checked 1ms
+     → Cannot initialize local storage without a `--localstorage-file` path
+   × Checklist & Ship Lock Verification > persists checked state to localStorage 0ms
+     → Cannot initialize local storage without a `--localstorage-file` path
+   × Checklist & Ship Lock Verification > ShipPage is locked when checklist is incomplete 0ms
+     → Cannot initialize local storage without a `--localstorage-file` path
+   × Checklist & Ship Lock Verification > ShipPage unlocks when all 10 items are checked 0ms
+     → Cannot initialize local storage without a `--localstorage-file` path
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/ChecklistLock.test.tsx > Checklist & Ship Lock Verification > renders exactly 10 checklist items
+ FAIL  src/pages/ChecklistLock.test.tsx > Checklist & Ship Lock Verification > updates counter and warning when items are checked
+ FAIL  src/pages/ChecklistLock.test.tsx > Checklist & Ship Lock Verification > persists checked state to localStorage
+ FAIL  src/pages/ChecklistLock.test.tsx > Checklist & Ship Lock Verification > ShipPage is locked when checklist is incomplete
+ FAIL  src/pages/ChecklistLock.test.tsx > Checklist & Ship Lock Verification > ShipPage unlocks when all 10 items are checked
+SecurityError: Cannot initialize local storage without a `--localstorage-file` path
+ ❯ src/pages/ChecklistLock.test.tsx:19:9
+     17| describe('Checklist & Ship Lock Verification', () => {
+     18|     beforeEach(() => {
+     19|         localStorage.clear();
+       |         ^
+     20|         vi.clearAllMocks();
+     21|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  23:05:22
+   Duration  20.95s (transform 142ms, setup 2.85s, collect 2.68s, tests 16ms, environment 14.09s, prepare 793ms)
+

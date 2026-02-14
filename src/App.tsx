@@ -12,6 +12,10 @@ import ResourcesPage from "./pages/ResourcesPage";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
+
+import TestChecklistPage from "./pages/TestChecklistPage";
+import ShipPage from "./pages/ShipPage";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -29,6 +33,11 @@ const App = () => (
             <Route path="resources" element={<ResourcesPage />} />
             <Route path="profile" element={<ProfilePage />} />
           </Route>
+
+          {/* New PRP Routes */}
+          <Route path="/prp/07-test" element={<TestChecklistPage />} />
+          <Route path="/prp/08-ship" element={<ShipPage />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
