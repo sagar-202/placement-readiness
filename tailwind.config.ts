@@ -18,17 +18,6 @@ export default {
       },
     },
     extend: {
-      fontFamily: {
-        heading: ["DM Serif Display", "serif"],
-        body: ["DM Sans", "sans-serif"],
-      },
-      spacing: {
-        "sp-1": "8px",
-        "sp-2": "16px",
-        "sp-3": "24px",
-        "sp-4": "40px",
-        "sp-5": "64px",
-      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -86,12 +75,6 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
-      },
-      transitionDuration: {
-        default: "180ms",
-      },
-      transitionTimingFunction: {
-        default: "ease-in-out",
       },
       keyframes: {
         "accordion-down": {

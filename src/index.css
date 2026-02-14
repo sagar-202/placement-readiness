@@ -4,65 +4,50 @@
 
 @layer base {
   :root {
-    /* KodNest Premium Build System — 4-color palette */
-    --background: 40 14% 96%;
-    --foreground: 0 0% 7%;
+    --background: 230 25% 97%;
+    --foreground: 230 25% 10%;
 
-    --card: 40 10% 98%;
-    --card-foreground: 0 0% 7%;
+    --card: 0 0% 100%;
+    --card-foreground: 230 25% 10%;
 
-    --popover: 40 10% 98%;
-    --popover-foreground: 0 0% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 230 25% 10%;
 
-    --primary: 0 100% 27%;
-    --primary-foreground: 40 14% 96%;
+    --primary: 245 58% 51%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 40 8% 90%;
-    --secondary-foreground: 0 0% 7%;
+    --secondary: 240 20% 95%;
+    --secondary-foreground: 230 25% 10%;
 
-    --muted: 40 8% 92%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 240 15% 93%;
+    --muted-foreground: 230 10% 45%;
 
-    --accent: 0 100% 27%;
-    --accent-foreground: 40 14% 96%;
+    --accent: 245 40% 94%;
+    --accent-foreground: 245 58% 51%;
 
-    --destructive: 0 72% 45%;
-    --destructive-foreground: 40 14% 96%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --success: 140 30% 42%;
-    --success-foreground: 40 14% 96%;
+    --success: 142 40% 45%;
+    --success-foreground: 0 0% 100%;
 
-    --warning: 40 70% 50%;
-    --warning-foreground: 0 0% 7%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
 
-    --border: 40 8% 86%;
-    --input: 40 8% 86%;
-    --ring: 0 100% 27%;
+    --border: 240 12% 90%;
+    --input: 240 12% 90%;
+    --ring: 245 58% 51%;
 
-    --radius: 6px;
+    --radius: 8px;
 
-    --sidebar-background: 40 10% 97%;
-    --sidebar-foreground: 0 0% 20%;
-    --sidebar-primary: 0 100% 27%;
-    --sidebar-primary-foreground: 40 14% 96%;
-    --sidebar-accent: 40 8% 92%;
-    --sidebar-accent-foreground: 0 0% 7%;
-    --sidebar-border: 40 8% 88%;
-    --sidebar-ring: 0 100% 27%;
-
-    /* Typography */
-    --font-heading: 'DM Serif Display', serif;
-    --font-body: 'DM Sans', sans-serif;
-
-    /* Spacing scale: 8, 16, 24, 40, 64 */
-    --space-1: 8px;
-    --space-2: 16px;
-    --space-3: 24px;
-    --space-4: 40px;
-    --space-5: 64px;
-
-    /* Transitions */
-    --transition-default: 180ms ease-in-out;
+    --sidebar-background: 245 30% 16%;
+    --sidebar-foreground: 240 20% 85%;
+    --sidebar-primary: 245 58% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 245 25% 22%;
+    --sidebar-accent-foreground: 240 20% 95%;
+    --sidebar-border: 245 20% 24%;
+    --sidebar-ring: 245 58% 51%;
   }
 }
 
@@ -78,25 +63,21 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-body);
+    font-family: 'Inter', system-ui, sans-serif;
     font-size: 16px;
-    line-height: 1.7;
+    line-height: 1.6;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading);
-    letter-spacing: -0.01em;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 700;
     line-height: 1.2;
     color: hsl(var(--foreground));
   }
 
   h1 { font-size: 2.5rem; }
   h2 { font-size: 2rem; }
-  h3 { font-size: 1.5rem; }
-
-  p {
-    max-width: 720px;
-  }
+  h3 { font-size: 1.25rem; }
 }
 
 @layer utilities {
