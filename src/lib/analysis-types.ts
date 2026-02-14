@@ -26,4 +26,14 @@ export interface AnalysisEntry {
   questions: string[];
   readinessScore: number;
   skillConfidenceMap?: Record<string, "know" | "practice">;
+  companyIntel?: {
+    industry: string;
+    size: "Startup" | "Mid-size" | "Enterprise";
+    hiringFocus: string;
+  };
+  roundMapping?: {
+    roundNumber: number;
+    name: string;
+    desc: string;
+  }[];
 }

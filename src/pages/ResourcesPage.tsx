@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { getEntryById, getHistory, updateEntry } from "@/lib/analysis-store";
 import type { AnalysisEntry } from "@/lib/analysis-types";
-import { CheckCircle, BookOpen, Calendar, HelpCircle, Target, Download, Copy, ArrowRight, ThumbsUp, ThumbsDown } from "lucide-react";
+import { CheckCircle, BookOpen, Calendar, HelpCircle, Target, Download, Copy, ArrowRight, ThumbsUp, ThumbsDown, Building, Users, Briefcase, ListChecks, Info } from "lucide-react";
 import { toast } from "sonner";
 
 const categoryColors: Record<string, string> = {
@@ -281,6 +281,69 @@ const ResourcesPage = () => {
         </div>
         <ReadinessRing score={liveScore} />
       </div>
+
+      {/* Company Intel Card */}
+      {entry.companyIntel && (
+        <Card className="bg-primary/5 border-primary/20">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Building className="h-5 w-5 text-primary" /> Company Intelligence
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex flex-wrap gap-4">
+              <div className="flex items-center gap-2 bg-background p-2 rounded-md border text-sm">
+                <Briefcase className="h-4 w-4 text-muted-foreground" />
+                <span className="text-muted-foreground">Industry:</span>
+                <span className="font-medium text-foreground">{entry.companyIntel.industry}</span>
+              </div>
+              <div className="flex items-center gap-2 bg-background p-2 rounded-md border text-sm">
+                <Users className="h-4 w-4 text-muted-foreground" />
+                <span className="text-muted-foreground">Size:</span>
+                <Badge variant={entry.companyIntel.size === "Enterprise" ? "default" : "secondary"}>
+                  {entry.companyIntel.size}
+                </Badge>
+              </div>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-foreground mb-1">Typical Hiring Focus:</p>
+              <p className="text-sm text-muted-foreground">{entry.companyIntel.hiringFocus}</p>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground/80 mt-2">
+              <Info className="h-3 w-3" />
+              <span>Demo Mode: Company intel generated heuristically based on name.</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Round Mapping Timeline */}
+      {entry.roundMapping && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <ListChecks className="h-5 w-5" /> Expected Interview Rounds
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Based on company size and your specific skill set.</p>
+          </CardHeader>
+          <CardContent>
+            <div className="relative pl-6 border-l-2 border-muted space-y-8 my-2">
+              {entry.roundMapping.map((round) => (
+                <div key={round.roundNumber} className="relative">
+                  <span className="absolute -left-[31px] bg-background border-2 border-primary text-primary h-6 w-6 rounded-full flex items-center justify-center text-xs font-bold">
+                    {round.roundNumber}
+                  </span>
+                  <div>
+                    <h4 className="font-semibold text-foreground text-base">{round.name}</h4>
+                    <p className="text-sm text-muted-foreground mt-1">{round.desc}</p>
+                    <p className="text-xs font-medium text-primary mt-1.5 uppercase tracking-wide">Why this round matters</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Extracted Skills */}
       <Card>

@@ -320,12 +320,106 @@ export function generateQuestions(skills: SkillCategory[]): string[] {
   return questions.slice(0, 10);
 }
 
+export function generateCompanyIntel(company: string): { industry: string; size: "Startup" | "Mid-size" | "Enterprise"; hiringFocus: string } {
+  const name = company.toLowerCase();
+
+  // Heuristic lists
+  const enterprises = ["google", "microsoft", "amazon", "meta", "apple", "netflix", "adobe", "salesforce", "oracle", "ibm", "cisco", "intel", "infosys", "tcs", "wipro", "accenture", "cognizant", "capgemini", "deloitte", "jpmorgan", "goldman sachs", "morgan stanley"];
+  const midSize = ["uber", "airbnb", "stripe", "coinbase", "spotify", "shopify", "atlassian", "slack", "zoom", "dropbox", "box", "reddit", "twitter", "x", "snapchat", "pinterest"];
+
+  let size: "Startup" | "Mid-size" | "Enterprise" = "Startup";
+  let industry = "Technology Services";
+  let hiringFocus = "Practical problem solving and specific tech stack depth.";
+
+  if (enterprises.some(e => name.includes(e))) {
+    size = "Enterprise";
+    hiringFocus = "Strong DSA fundamentals, scalable system design, and core CS concepts.";
+    if (["infosys", "tcs", "wipro", "accenture", "cognizant"].some(e => name.includes(e))) {
+      industry = "IT Services & Consulting";
+    } else if (["jpmorgan", "goldman", "morgan"].some(e => name.includes(e))) {
+      industry = "FinTech / Banking";
+    } else {
+      industry = "Big Tech / Product";
+    }
+  } else if (midSize.some(e => name.includes(e))) {
+    size = "Mid-size";
+    hiringFocus = "Balance of DSA, system design, and product engineering skills.";
+    industry = "High-Growth Product";
+  } else {
+    // Default heuristic for unknown
+    size = "Startup";
+    industry = "Internet / Startup";
+  }
+
+  return { industry, size, hiringFocus };
+}
+
+export function generateRoundMapping(
+  intel: { size: string },
+  skills: SkillCategory[]
+): { roundNumber: number; name: string; desc: string }[] {
+  const rounds: { roundNumber: number; name: string; desc: string }[] = [];
+
+  const hasWeb = hasCategory(skills, "Web");
+  const hasData = hasCategory(skills, "Data");
+  const hasCore = hasCategory(skills, "Core CS");
+
+  if (intel.size === "Enterprise") {
+    rounds.push({
+      roundNumber: 1,
+      name: "Online Assessment",
+      desc: "60-90 mins coding test focus on DSA (Arrays, Strings, DP) + Aptitude.",
+    });
+    rounds.push({
+      roundNumber: 2,
+      name: "Technical Round 1",
+      desc: "Live coding on DSA (Trees/Graphs) + Core CS (OS/DBMS) concepts.",
+    });
+    rounds.push({
+      roundNumber: 3,
+      name: "Technical Round 2",
+      desc: "System Design basics + Project deep dive. Expect 'Why this DB?' questions.",
+    });
+    rounds.push({
+      roundNumber: 4,
+      name: "HR / Managerial",
+      desc: "Behavioral fit, 'Why this company?', and culture alignment.",
+    });
+  } else {
+    // Startup / Mid-size
+    rounds.push({
+      roundNumber: 1,
+      name: "Screening / Take-home",
+      desc: hasWeb
+        ? "Build a small React/Node app or fix bugs in an existing repo."
+        : "Practical coding task or rapid fire tech questions.",
+    });
+    rounds.push({
+      roundNumber: 2,
+      name: "Technical Deep Dive",
+      desc: hasWeb
+        ? "Pair programming: Add a feature to your task. Discuss state management."
+        : "Live problem solving (practical NOT just LeetCode).",
+    });
+    rounds.push({
+      roundNumber: 3,
+      name: "Culture & Engineering Manager",
+      desc: "Discuss past projects, team conflict resolution, and product sense.",
+    });
+  }
+
+  return rounds;
+}
+
 export function runAnalysis(company: string, role: string, jdText: string): AnalysisEntry {
   const skills = extractSkills(jdText);
   const score = calculateReadinessScore(company, role, jdText, skills);
   const checklist = generateChecklist(skills);
   const plan = generatePlan(skills);
   const questions = generateQuestions(skills);
+
+  const companyIntel = generateCompanyIntel(company);
+  const roundMapping = generateRoundMapping(companyIntel, skills);
 
   return {
     id: crypto.randomUUID(),
@@ -338,5 +432,7 @@ export function runAnalysis(company: string, role: string, jdText: string): Anal
     checklist,
     questions,
     readinessScore: score,
+    companyIntel,
+    roundMapping
   };
 }
