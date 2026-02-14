@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, BookOpen, ClipboardCheck, FolderOpen, User, ListChecks, Rocket } from "lucide-react";
+import { LayoutDashboard, BookOpen, ClipboardCheck, FolderOpen, User, ListChecks, Rocket, Trophy } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
@@ -9,8 +9,9 @@ const navItems = [
   { label: "Assessments", path: "/dashboard/assessments", icon: ClipboardCheck },
   { label: "Resources", path: "/dashboard/resources", icon: FolderOpen },
   { label: "Profile", path: "/dashboard/profile", icon: User },
-  { label: "Checklist", path: "/prp/07-test", icon: ListChecks }, // New
-  { label: "Ship", path: "/prp/08-ship", icon: Rocket }, // New
+  { label: "Checklist", path: "/prp/07-test", icon: ListChecks },
+  { label: "Ship", path: "/prp/08-ship", icon: Rocket },
+  { label: "Proof", path: "/prp/proof", icon: Trophy }, // New
 ];
 
 const DashboardLayout = () => {

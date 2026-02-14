@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +16,7 @@ import NotFound from "./pages/NotFound";
 
 import TestChecklistPage from "./pages/TestChecklistPage";
 import ShipPage from "./pages/ShipPage";
+import ProofPage from "./pages/ProofPage";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +39,7 @@ const App = () => (
           {/* New PRP Routes */}
           <Route path="/prp/07-test" element={<TestChecklistPage />} />
           <Route path="/prp/08-ship" element={<ShipPage />} />
+          <Route path="/prp/proof" element={<ProofPage />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
