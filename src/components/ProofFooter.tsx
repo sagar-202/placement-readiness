@@ -18,14 +18,13 @@ const ProofFooter = ({ items, onToggle }: ProofFooterProps) => {
           <button
             key={index}
             onClick={() => onToggle(index)}
-            className="flex items-center gap-sp-1 font-body text-sm transition-all duration-[180ms] ease-in-out"
+            className="flex items-center gap-sp-1 font-body text-sm transition-all duration-200 ease-in-out"
           >
             <span
-              className={`flex h-5 w-5 items-center justify-center rounded-sm border transition-all duration-[180ms] ease-in-out ${
-                item.completed
+              className={`flex h-5 w-5 items-center justify-center rounded-sm border transition-all duration-200 ease-in-out ${item.completed
                   ? "border-success bg-success text-success-foreground"
                   : "border-border bg-background text-transparent"
-              }`}
+                }`}
             >
               <Check className="h-3 w-3" />
             </span>
