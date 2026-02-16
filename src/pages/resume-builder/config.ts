@@ -1,0 +1,58 @@
+export const steps = [
+    {
+        path: "01-problem",
+        title: "1. Problem Statement",
+        headline: "Define the Problem",
+        subtext: "What specific user problem are we solving?",
+        prompt: "Write a clear problem statement for the AI Resume Builder.",
+    },
+    {
+        path: "02-market",
+        title: "2. Market Research",
+        headline: "Analyze the Market",
+        subtext: "Who are the competitors and what is our unique value proposition?",
+        prompt: "Summarize top 3 competitors and our key differentiator.",
+    },
+    {
+        path: "03-architecture",
+        title: "3. System Architecture",
+        headline: "Design the Architecture",
+        subtext: "Define the high-level components and data flow.",
+        prompt: "Describe the frontend, backend, and AI service interaction.",
+    },
+    {
+        path: "04-hld",
+        title: "4. High Level Design",
+        headline: "High Level Design",
+        subtext: "Map out the system modules and interfaces.",
+        prompt: "List the key modules and their responsibilities.",
+    },
+    {
+        path: "05-lld",
+        title: "5. Low Level Design",
+        headline: "Low Level Design",
+        subtext: "Detail the class structure and database schema.",
+        prompt: "Provide the JSON schema for the resume data.",
+    },
+    {
+        path: "06-build",
+        title: "6. Build Phase",
+        headline: "Implementation",
+        subtext: "Start coding the core features.",
+        prompt: "Paste the GitHub link to the initial commit.",
+    },
+    {
+        path: "07-test",
+        title: "7. Testing",
+        headline: "Testing & Validation",
+        subtext: "Ensure functionality and reliability.",
+        prompt: "List 3 key test cases you have verified.",
+    },
+    {
+        path: "08-ship",
+        title: "8. Ship",
+        headline: "Deployment",
+        subtext: "Deploy the application to production.",
+        prompt: "Paste the deployed application URL.",
+    },
+];
