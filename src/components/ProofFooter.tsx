@@ -22,8 +22,8 @@ const ProofFooter = ({ items, onToggle }: ProofFooterProps) => {
           >
             <span
               className={`flex h-5 w-5 items-center justify-center rounded-sm border transition-all duration-200 ease-in-out ${item.completed
-                  ? "border-success bg-success text-success-foreground"
-                  : "border-border bg-background text-transparent"
+                ? "border-success bg-success text-success-foreground"
+                : "border-border bg-background text-transparent"
                 }`}
             >
               <Check className="h-3 w-3" />

@@ -1,14 +1,17 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CheckCircle2, Copy, ExternalLink, Trophy, AlertCircle } from "lucide-react";
+import { CheckCircle2, Copy, Trophy, AlertCircle, ExternalLink, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { isChecklistComplete, STORAGE_KEY as CHECKLIST_KEY } from "@/lib/checklist-logic";
+import { Layout } from "@/components/layout/Layout";
+import { SecondaryPanel } from "@/components/layout/SecondaryPanel";
 
 const PROOF_STORAGE_KEY = "prp_final_submission";
 
@@ -29,6 +32,7 @@ interface ProofData {
 }
 
 const ProofPage = () => {
+    const navigate = useNavigate();
     const [data, setData] = useState<ProofData>({
         lovableUrl: "",
         githubUrl: "",
@@ -107,38 +111,50 @@ Core Capabilities:
     };
 
     return (
-        <div className="container max-w-4xl py-10 space-y-8">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Proof & Submission</h1>
-                    <p className="text-muted-foreground mt-2">
-                        Finalize your build and generate your proof of work.
-                    </p>
+        <Layout
+            projectName="KodNest Premium Build"
+            currentStep={5}
+            totalSteps={5}
+            status={isShipped ? "Shipped" : "In Progress"}
+            title="Proof & Submission"
+            description="Finalize your build and generate your proof of work."
+            stepLabel="Step 5"
+            sidebar={
+                <SecondaryPanel
+                    stepExplanation="You've reached the final step. Verify your implementation against the checklist and provide the necessary links to your deployed application."
+                    prompt="Verify all steps and provide your project links. Ensure all checklist items are passed and your URLs are valid."
+                    onCopy={handleCopy}
+                    onBuild={() => toast.info("Build logic triggered")}
+                    onSuccess={() => toast.success("Marked as working")}
+                    onError={() => toast.error("Marked as error")}
+                    onScreenshot={() => toast.info("Screenshot tool triggered")}
+                />
+            }
+        >
+            <div className="space-y-8">
+                {isShipped && (
+                    <Card className="bg-success/5 border-success/50">
+                        <CardContent className="pt-6 flex gap-4">
+                            <Trophy className="h-12 w-12 text-success shrink-0" />
+                            <div className="space-y-2">
+                                <h3 className="text-xl font-bold text-foreground">You built a real product.</h3>
+                                <p className="text-muted-foreground">
+                                    Not a tutorial. Not a clone. A structured tool that solves a real problem.
+                                    This is your proof of work.
+                                </p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                )}
+
+                <div className="mb-6">
+                    <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Back to Dashboard
+                    </Button>
                 </div>
-                <Badge
-                    className={`text-lg py-1 px-4 ${isShipped ? "bg-success hover:bg-success" : "bg-warning hover:bg-warning"}`}
-                >
-                    {isShipped ? "Shipped" : "In Progress"}
-                </Badge>
-            </div>
 
-            {isShipped && (
-                <Card className="bg-success/5 border-success/50">
-                    <CardContent className="pt-6 flex gap-4">
-                        <Trophy className="h-12 w-12 text-success shrink-0" />
-                        <div className="space-y-2">
-                            <h3 className="text-xl font-bold text-success-foreground">You built a real product.</h3>
-                            <p className="text-success-foreground/80">
-                                Not a tutorial. Not a clone. A structured tool that solves a real problem.
-                                This is your proof of work.
-                            </p>
-                        </div>
-                    </CardContent>
-                </Card>
-            )}
-
-            <div className="grid md:grid-cols-2 gap-8">
-                <div className="space-y-6">
+                <div className="grid gap-8">
                     <Card>
                         <CardHeader>
                             <CardTitle>1. Step Completion</CardTitle>
@@ -156,7 +172,7 @@ Core Capabilities:
                                 </div>
                             ))}
 
-                            <div className="pt-4 border-t space-y-4">
+                            <div className="pt-4 border-t border-border space-y-4">
                                 <div className="flex items-center space-x-3">
                                     <div className={`h-4 w-4 rounded-sm border ${checklistPassed ? "bg-primary border-primary" : "border-muted-foreground"}`}>
                                         {checklistPassed && <CheckCircle2 className="h-4 w-4 text-primary-foreground" />}
@@ -170,20 +186,10 @@ Core Capabilities:
                                         </Button>
                                     )}
                                 </div>
-                                <div className="flex items-center space-x-3">
-                                    <div className={`h-4 w-4 rounded-sm border ${checklistPassed ? "bg-primary border-primary" : "border-muted-foreground"}`}>
-                                        {checklistPassed && <CheckCircle2 className="h-4 w-4 text-primary-foreground" />}
-                                    </div>
-                                    <span className={checklistPassed ? "" : "text-muted-foreground"}>
-                                        Ship Lock Unlocked
-                                    </span>
-                                </div>
                             </div>
                         </CardContent>
                     </Card>
-                </div>
 
-                <div className="space-y-6">
                     <Card>
                         <CardHeader>
                             <CardTitle>2. Artifacts</CardTitle>
@@ -248,7 +254,7 @@ Core Capabilities:
                     </Card>
                 </div>
             </div>
-        </div>
+        </Layout>
     );
 };
 

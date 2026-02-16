@@ -17,9 +17,6 @@ import NotFound from "./pages/NotFound";
 import TestChecklistPage from "./pages/TestChecklistPage";
 import ShipPage from "./pages/ShipPage";
 import ProofPage from "./pages/ProofPage";
-import ResumeBuilderLayout from "./pages/resume-builder/Layout";
-import StepPage from "./pages/resume-builder/StepPage";
-import ResumeProofPage from "./pages/resume-builder/ProofPage";
 
 const queryClient = new QueryClient();
 
@@ -43,20 +40,6 @@ const App = () => (
           <Route path="/prp/07-test" element={<TestChecklistPage />} />
           <Route path="/prp/08-ship" element={<ShipPage />} />
           <Route path="/prp/proof" element={<ProofPage />} />
-
-          {/* AI Resume Builder Routes */}
-          <Route path="/rb" element={<ResumeBuilderLayout />}>
-            <Route index element={<StepPage />} /> {/* Default to first step logic handled in Layout or here */}
-            <Route path="01-problem" element={<StepPage />} />
-            <Route path="02-market" element={<StepPage />} />
-            <Route path="03-architecture" element={<StepPage />} />
-            <Route path="04-hld" element={<StepPage />} />
-            <Route path="05-lld" element={<StepPage />} />
-            <Route path="06-build" element={<StepPage />} />
-            <Route path="07-test" element={<StepPage />} />
-            <Route path="08-ship" element={<StepPage />} />
-            <Route path="proof" element={<ResumeProofPage />} />
-          </Route>
 
           <Route path="*" element={<NotFound />} />
         </Routes>

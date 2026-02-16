@@ -7,6 +7,7 @@ export default {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
+    "./index.html",
   ],
   prefix: "",
   theme: {
@@ -18,6 +19,20 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        serif: ["Playfair Display", "serif"],
+        sans: ["Inter", "sans-serif"],
+        body: ["Inter", "sans-serif"],
+      },
+      spacing: {
+        "sp-1": "8px",
+        "sp-2": "16px",
+        "sp-3": "24px",
+        "sp-4": "32px",
+        "sp-5": "40px",
+        "sp-6": "48px",
+        "sp-8": "64px",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
